@@ -13,6 +13,8 @@ EXPECTED_LIBRARIES = {
     'lib/armeabi-v7a/libg.so': '552d1880290cec5406b0d4bd8bd5f887a48739b100766e247a57b3e60b4471f2',
     'lib/armeabi-v7a/libsupercell_brawlstars.so': 'a01421fd1faef4223a171ce01e9eb26b6825a4f96664747dd5b6e6ec5d67e1a2',
 }
+ORIGINAL_BASE_HASH = '4e83a342a854f24fd44e67f3231a560e6aac775df77dffb58503f245d4677554'
+DEVICE_FILES = '/sdcard/Android/data/com.supercell.brawlstarx/files'
 
 
 def run(*args):
@@ -29,6 +31,10 @@ def main():
     missing = [str(p) for p in sources if not p.is_file()]
     if missing:
         raise SystemExit('Missing prepared inputs:\n' + '\n'.join(missing))
+    original_base = APK32 / 'original/base.apk'
+    if args.install:
+        if not original_base.is_file() or hashlib.sha256(original_base.read_bytes()).hexdigest() != ORIGINAL_BASE_HASH:
+            raise SystemExit('Missing or unexpected original 69.414 base APK; refusing install')
     with zipfile.ZipFile(sources[1]) as abi:
         for name, expected in EXPECTED_LIBRARIES.items():
             if hashlib.sha256(abi.read(name)).hexdigest() != expected:
@@ -54,6 +60,8 @@ def main():
             raise SystemExit('Expected precisely two signed splits')
         run('adb', '-d', 'shell', 'am', 'force-stop', 'com.supercell.brawlstarx')
         run('adb', '-d', 'install-multiple', '-r', '-p', 'com.supercell.brawlstarx', *files)
+        run('adb', '-d', 'shell', 'mkdir', '-p', DEVICE_FILES)
+        run('adb', '-d', 'push', original_base, DEVICE_FILES + '/original_base.apk')
         run('adb', '-d', 'reverse', 'tcp:9339', 'tcp:9339')
 
 

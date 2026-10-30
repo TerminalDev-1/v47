@@ -16,4 +16,4 @@ The original ARM32 XAPK and extracted splits are in `APK/` and are excluded from
 
 The V69 client did not reach its connecting screen: the separately packaged ARM32 clone stopped during protected startup before sending a real ClientHello. Several approaches failed to make it usable, and further work would require disproportionate time and compute for the current goal. V69 is paused for possible future work in the separate [V69 research repository](https://github.com/TerminalDev-1/brawl-stars-v69-research).
 
-This repository was renamed from the V69 project, so its Git history and [legacy V69 release](https://github.com/TerminalDev-1/brawl-stars-v66-private-server/releases/tag/v0.1.0-investigation) still contain the earlier work. Those release files are not V66 clients.
+This repository was renamed from the V69 project, so its earlier Git history still contains V69 work. The V69 release and its assets have been removed from this repository; the separate V69 repository preserves the project history for future work.

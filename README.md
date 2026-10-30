@@ -4,7 +4,9 @@ Private Server is an early-stage Python private-server project for Brawl Stars V
 
 ## Client
 
-The provided APKPure bundle identifies itself as Brawl Stars **66.300** (`com.supercell.brawlstars`, version code `66300`). It contains a single ARM64 split, `config.arm64_v8a.apk`, and no ARM32 split. The game library (`libg.so`) and the protection library (`libsupercell_brawlstars.so`) are both 64-bit ARM. The original XAPK and extracted splits are in `APK/` and are excluded from Git. USB debugging (`adb -d`) is the preferred way to test on the tablet; preserve the official installation and use a separately identified test copy.
+The supplied APKPure bundle identifies itself as Brawl Stars **66.300** (`com.supercell.brawlstars`, version code `66300`) and contains ARM64 libraries. A separate [66.300 ARM32 bundle](https://apkpure.net/brawl-stars-android-app/com.supercell.brawlstars/download/66.300) has also been downloaded. Its SHA-1 matches the publisher's listing, and the signatures of its base, ARM32, English, and density splits verify against the same signing certificate as the supplied bundle. Its `libg.so` and `libsupercell_brawlstars.so` are both 32-bit ARM. The protection library is still present; startup and server redirection have not been tested.
+
+Both original XAPKs and their extracted splits are in `APK/` and are excluded from Git. USB debugging (`adb -d`) is the preferred way to test on the tablet; preserve the official installation and use a separately identified test copy.
 
 ## Protocol reference
 

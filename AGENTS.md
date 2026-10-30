@@ -1,8 +1,5 @@
 # Private Server
 
-This project is Private Server, a Python private server for Brawl Stars v69 in very early development. Build the client and server components needed to make the private server work. Preserve original APKs and work on separately identified copies. Verify actual client behavior and protocol details rather than assuming compatibility.
+This is an early-stage Python private-server project targeting Brawl Stars V66, the Prestige update. Inspect the workspace and APK before assuming server code exists. The supplied client is version 66.300 and ARM64; do not assume reference implementations for 66.293 are compatible. Build the client and server components needed for the project. Preserve original APKs and the official installed game, and use a separately identified test copy. Prefer USB debugging (`adb -d`) for tablet work. Verify actual client and protocol behavior.
 
-Do not assume a server codebase already exists. Inspect the workspace first; if it does not contain one, build the necessary implementation from scratch.
-
-Commit and push meaningful, verified progress during development, and continue working in the same turn; a checkpoint is not a stopping point. Preserve unrelated changes and do not publish secrets or generated artifacts.
-
+The V69 project is paused at https://github.com/TerminalDev-1/brawl-stars-v69-research; do not treat it as the V66 implementation. Commit and push meaningful, verified progress during development and continue working in the same turn. Preserve unrelated changes and avoid publishing secrets or generated artifacts.

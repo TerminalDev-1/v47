@@ -1,28 +1,17 @@
-# Private Server — Brawl Stars v69
+# Brawl Stars V66 Private Server Implementation
 
-Private Server is a Python private server for Brawl Stars 69.414. It is in **very early development**: the client and server do not work together yet, and login and gameplay have not been implemented.
+Private Server is an early-stage Python private-server project for Brawl Stars V66, the Prestige update. The V66 client and server are not working together yet. There is no server implementation in this workspace; development starts from the APK and protocol references below.
 
-## Current development status
+## Client
 
-The Python server implements the initial ClientHello (10100) and ServerHello (20100) exchange. An independent v69-format reference client completed this exchange; the actual 69.414 Android client has not yet connected. The 32-bit client copy exits during startup despite experimental native redirect and bootstrap changes. Login, encryption, and gameplay remain unimplemented.
+The provided APKPure bundle identifies itself as Brawl Stars **66.300** (`com.supercell.brawlstars`, version code `66300`). It contains a single ARM64 split, `config.arm64_v8a.apk`, and no ARM32 split. The game library (`libg.so`) and the protection library (`libsupercell_brawlstars.so`) are both 64-bit ARM. The original XAPK and extracted splits are in `APK/` and are excluded from Git. USB debugging (`adb -d`) is the preferred way to test on the tablet; preserve the official installation and use a separately identified test copy.
 
-Requires Python 3.10 or newer. To start the test listener and forward the port over USB:
+## Protocol reference
 
-```powershell
-python "Private Server/server.py"
-adb -d reverse tcp:9339 tcp:9339
-```
+[KSBS-V66](https://github.com/KasyaGamer/KSBS-V66) is a public Node.js server example for **66.293**. Its source archive contains packet implementations including ClientHello (10100), ServerHello (20100), login, and home messages. Its README describes it as a testing project with incomplete functionality. It is a useful reference, but compatibility with **66.300** and the provided APK has not been established. Our server is intended to be written in Python.
 
-The listener binds to `127.0.0.1:9339` by default. It reads seven-byte frames and responds to a valid ClientHello with a 24-byte ServerHello challenge. The initial message layout was checked against the [laserjs v69 reference client](https://github.com/justflyne/laserjs); it still needs verification with this Android build. Run its tests with `python -m unittest discover -s tests -v`.
+## Why we switched from V69
 
-## APKs
+The V69 client did not reach its connecting screen: the separately packaged ARM32 clone stopped during protected startup before sending a real ClientHello. Several approaches failed to make it usable, and further work would require disproportionate time and compute for the current goal. V69 is paused for possible future work in the separate [V69 research repository](https://github.com/TerminalDev-1/brawl-stars-v69-research).
 
-The release contains the original 69.414 APKMirror bundle with ARM64 and ARM32 splits, plus five signed split APKs for a separate 32-bit client copy. The copy uses package ID `com.supercell.brawlstarx` and requests INTERNET permission. It currently exits during startup and is not playable. Install all five splits together; the official Supercell game remains a separate package.
-
-The APKs are versioned release assets. The local debug signing key is not published, so a rebuild signed with a different key requires reinstalling the client copy.
-
-[Client development notes](APK32/DEVELOPMENT.md) record completed work and remaining issues. Generated files, logs, reference APKs from other apps and signing keys are excluded from Git. The included patch scripts are experimental and do not yet form a complete portable build system.
-
-## USB redirect development
-
-The experimental redirect is in `client_patch/redirect.js`. It matches port 9339; the actual Android client's destination remains unverified. Build with `python client_patch/build_redirect.py --install` using the prepared local APK, decoded dex and signing tools. The command targets the USB device with `adb -d`. The optional `--self-test` sends a synthetic frame to validate the redirect; it is not a game login. Run `node tests/test_redirect.js` for address-rewrite tests. A separate experimental ARM32 native bootstrap is in `client_patch/native_redirect.c`; it is tied to the exact 69.414 libraries and has not resolved the startup failure.
+This repository was renamed from the V69 project, so its Git history and [legacy V69 release](https://github.com/TerminalDev-1/brawl-stars-v66-private-server/releases/tag/v0.1.0-investigation) still contain the earlier work. Those release files are not V66 clients.

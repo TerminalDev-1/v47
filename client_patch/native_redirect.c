@@ -1,4 +1,5 @@
 /* 69.414 ARM32 private-server bootstrap. Experimental, exact build only. */
+#include "redirect_address.h"
 typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned long uptr;
@@ -99,10 +100,9 @@ static int tgkill_guard(int process,int thread,int sig) {
  return original_tgkill(process,thread,sig);
 }
 static int connect_local(int fd,const struct sockaddr *address,u32 len) {
- if(address && len>=8 && (address->family==2 || address->family==10)) {
-  const unsigned char *b=(const unsigned char *)address;u16 port=((u16)b[2]<<8)|b[3];
-  if(port==9339){unsigned char local[16]={2,0,0x24,0x7b,127,0,0,1,0,0,0,0,0,0,0,0};LOG("redirecting game port to USB listener");return original_connect(fd,(const struct sockaddr *)local,16);}
- }
+ unsigned char local[28];
+ u32 local_len=redirect_address(local,(const unsigned char *)address,len);
+ if(local_len){LOG("redirecting game port to USB listener");return original_connect(fd,(const struct sockaddr *)local,local_len);}
  return original_connect(fd,address,len);
 }
 __attribute__((visibility("default"))) void Java_com_privateserver_Shim_patchShield(void *env,void *cls) {

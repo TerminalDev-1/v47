@@ -1,4 +1,4 @@
-# Client investigation — 69.414
+# Client development — 69.414
 
 The official tablet installation remains `com.supercell.brawlstars` (ARM64). The separate test clone is `com.supercell.brawlstarx` (ARM32). The currently installed test clone has INTERNET permission restored and is stopped. Do not treat it as a working client.
 

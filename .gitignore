@@ -1,7 +1,7 @@
 # Generated files, large binaries, third-party references and local state
 APK/
 APK32/*
-!APK32/INVESTIGATION.md
+!APK32/DEVELOPMENT.md
 !APK32/rename_manifest.py
 !APK32/fix_query.py
 !APK32/build_offline_test.py

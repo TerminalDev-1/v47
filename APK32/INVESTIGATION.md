@@ -1,0 +1,23 @@
+# Client investigation — 69.414
+
+The official tablet installation remains `com.supercell.brawlstars` (ARM64). The separate test clone is `com.supercell.brawlstarx` (ARM32). The currently installed test clone has INTERNET permission restored and is stopped. Do not treat it as a working client.
+
+## Reproduced findings
+
+- The original package rename changed a package-visibility query as well as the manifest package. The protection then called `PackageManager.getApplicationInfo("com.supercell.brawlstars", ...)`, which threw because the original package was not visible. Its native initializer returned JNI_ERR. `fix_query.py` restores that query with a distinct binary XML string while retaining the clone ID; this got past that original error.
+- With original visibility restored and unmodified native code, protection reported `elsm.g: 01`. With injected Frida and the same query, it reported `elsm.B: 16`. The precise meaning of either code is unconfirmed. Frida changes the behavior, so conclusions drawn from it must be confirmed without instrumentation.
+- In a deliberately offline test, changing `elsm/o.b(String)` to return without invoking the default uncaught-exception handler, together with the query fix, let the process load `libg.so`, initialize audio and load Flutter/SCID components. It then died from SIGKILL within a few seconds. No playable screen or connection to the server was verified.
+- In one instrumented offline test, native code called `tgkill` repeatedly to send SIGKILL to threads in its own process. Suppressing those calls was insufficient: the process exited cleanly with status 1. Patching an exit wrapper earlier caused a native crash. Avoid assuming there is only one shutdown mechanism.
+- The native bootstrap is unpacked in memory. Post-unpack ARM32 snapshots are `bootstrap_runtime_text.bin` (base-relative 0x440000) and `bootstrap_400000.bin` (base-relative 0x400000). They are diagnostic snapshots, not replacement libraries.
+- The tablet also has Null's 69.252 and BSD 69.230, pulled under `reference/` for comparison. The Null's ARM32 `GameApp` native method declarations match 69.414's declarations, but this does not establish binary compatibility; no reference library has been substituted into the stock client.
+
+## Artifacts
+
+- `query_fixed_signed/`: signed base with fixed package visibility; original ARM32 split and asset/language/density splits are under `signed/`.
+- `offline_test_signed/`: signed base with package visibility fix, reporting-method experiment, and INTERNET permission removed. This was used for the offline isolation test. Its source procedure is in `build_offline_test.py`, with decoded sources under `smali/`.
+- `instrumented_signed/` and `gadget_probe.js`: temporary debugging builds. They are unstable and must not be treated as release builds. Frida can provoke additional checks; the test clone must stay offline while destinations are not verified.
+- `Private Server/server.py`: loopback-only protocol probe. Seven-byte framing is a hypothesis from older versions, and no v69 handshake or response is implemented. USB forwarding is `adb reverse tcp:9339 tcp:9339`.
+
+Next: identify and neutralize the remaining protection shutdown without losing the registered native methods, then verify a client endpoint redirect and observe real v69 handshake frames. Keep originals and the official installed game intact.
+
+- After the user requested it, INTERNET was restored in `online_test_signed/` and confirmed granted by Android. A launch still ended in SIGKILL; the server received no game connection. The client's destination has not yet been redirected to localhost.

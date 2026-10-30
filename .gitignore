@@ -1,0 +1,19 @@
+# Generated files, large binaries, third-party references and local state
+APK/
+APK32/*
+!APK32/INVESTIGATION.md
+!APK32/rename_manifest.py
+!APK32/fix_query.py
+!APK32/build_offline_test.py
+!APK32/restore_internet.py
+!APK32/report_original.smali
+!APK32/report_patched.smali
+!APK32/inspect_axml.py
+reference/
+tools/
+__pycache__/
+*.py[cod]
+*.log
+*.idsig
+*.keystore
+*.jks

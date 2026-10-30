@@ -16,8 +16,14 @@ The official tablet installation remains `com.supercell.brawlstars` (ARM64). The
 - `query_fixed_signed/`: signed base with fixed package visibility; original ARM32 split and asset/language/density splits are under `signed/`.
 - `offline_test_signed/`: signed base with package visibility fix, reporting-method experiment, and INTERNET permission removed. This was used for the offline isolation test. Its source procedure is in `build_offline_test.py`, with decoded sources under `smali/`.
 - `instrumented_signed/` and `gadget_probe.js`: temporary debugging builds. They are unstable and must not be treated as release builds. Frida can provoke additional checks; the test clone must stay offline while destinations are not verified.
-- `Private Server/server.py`: loopback-only protocol probe. Seven-byte framing is a hypothesis from older versions, and no v69 handshake or response is implemented. USB forwarding is `adb reverse tcp:9339 tcp:9339`.
+- `Private Server/server.py`: loopback-only hello listener. An independent v69-format reference client completed ClientHello and ServerHello; the real Android client has not yet done so. USB forwarding is `adb -d reverse tcp:9339 tcp:9339`.
 
 Next: identify and neutralize the remaining protection shutdown without losing the registered native methods, then verify a client endpoint redirect and observe real v69 handshake frames. Keep originals and the official installed game intact.
 
 - After the user requested it, INTERNET was restored in `online_test_signed/` and confirmed granted by Android. A launch still ended in SIGKILL; the server received no game connection. The client's destination has not yet been redirected to localhost.
+
+## USB redirect
+
+An experimental connect hook for port 9339 is in `client_patch/redirect.js`. A controlled socket aimed at a test address was redirected to 127.0.0.1:9339, forwarded by USB ADB, and delivered a synthetic frame to the Python listener. The actual game has not yet connected: it exits during protection startup, and its v69 server port and protocol remain unverified. INTERNET remains granted.
+
+The newer native bootstrap in `client_patch/native_redirect.c` avoids Frida and patches version-specific imports. It still reports protection code `01` and exits; spoofing the original signed base path did not resolve that. The code originates through a shared JNI string wrapper, which does not identify the underlying failing check. The currently installed test clone uses this experimental native bootstrap and is stopped. No real Android ClientHello has been observed.

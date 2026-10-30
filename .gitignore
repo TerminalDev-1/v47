@@ -17,3 +17,6 @@ __pycache__/
 *.idsig
 *.keystore
 *.jks
+
+build/
+client_patch/*.so

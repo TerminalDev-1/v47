@@ -4,4 +4,5 @@ This project is Private Server, a Python private server for Brawl Stars v69 in v
 
 Do not assume a server codebase already exists. Inspect the workspace first; if it does not contain one, build the necessary implementation from scratch.
 
-Commit and push meaningful, verified progress during development, then continue the work. Preserve unrelated changes and do not publish secrets or generated artifacts.
+Commit and push meaningful, verified progress during development, and continue working in the same turn; a checkpoint is not a stopping point. Preserve unrelated changes and do not publish secrets or generated artifacts.
+

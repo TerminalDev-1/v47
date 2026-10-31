@@ -21,3 +21,7 @@ The server currently supports framing, ClientHello/ServerHello, and keepalive. L
 - Signed APKs, original client assets, captures and local build tools stay outside Git.
 
 The original 47.227 APK remains unmodified in the project folder. Startup was verified across three cold starts without a debugger attached. The last verified screen was the update prompt; routing the old client to this server is the next integration step.
+
+The server foundations now include authenticated transport (`server/crypto.py`), bounded binary streams (`server/stream.py`) and persistent accounts (`server/accounts.py`). Run all checks with `python -m unittest discover -s server -p "test_*.py" -v`. Install dependencies with `python -m pip install -r requirements.txt`.
+
+The real tablet handshake has been captured through encrypted Login; details and the remaining key-configuration step are in `docs/protocol.md`.

@@ -13,3 +13,6 @@ ClientHello fields observed: protocol 2, key version 35, client major 47, minor 
 `server/accounts.py` persists account IDs and random tokens in SQLite. Account data and protocol captures are ignored by Git.
 
 The next acceptance test is actual tablet Login decryption, followed by LoginOk (20104) and a client-validated OwnHomeData (24101). No home-screen success has been claimed.
+
+
+ServiceSession now implements LoginOk and OwnHomeData after authenticated login. The home serializer uses a 47.227-specific Apache-2.0 reference, a minimal inventory, and the persistent account identity. This path passes an encrypted client-simulation test. The physical client's current ciphertext does not authenticate against the service key; device UI verification is still pending, so serialized packets alone are not recorded as home-screen success.

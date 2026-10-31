@@ -12,7 +12,7 @@ python -u server/main.py
 adb -s f298358c reverse tcp:19347 tcp:19347
 ```
 
-The server currently supports framing, ClientHello/ServerHello, and keepalive. Login encryption, LoginOk and OwnHomeData are pending actual client integration. A synthetic physical-tablet tunnel test passes; this does not demonstrate that the game client has logged in.
+The service implements framing, ClientHello/ServerHello, authenticated login, persistent accounts, LoginOk (20104), OwnHomeData (24101), and encrypted keepalive. Thirteen tests pass, including the complete encrypted login-to-home response sequence. The physical game client has sent encrypted Login to this service; its matching server-key configuration and actual home-screen decoding are still being verified.
 
 ## Client
 
@@ -20,7 +20,7 @@ The server currently supports framing, ClientHello/ServerHello, and keepalive. L
 - `tools/build_autostart.py`: packages the embedded script into the diagnostic base.
 - Signed APKs, original client assets, captures and local build tools stay outside Git.
 
-The original 47.227 APK remains unmodified in the project folder. Startup was verified across three cold starts without a debugger attached. The last verified screen was the update prompt; routing the old client to this server is the next integration step.
+The original 47.227 APK remains unmodified in the project folder. Startup was verified across three cold starts without a debugger attached. The routed client now sends real ClientHello and Login messages to the local service. Login authentication with the service key is the current integration blocker.
 
 The server foundations now include authenticated transport (`server/crypto.py`), bounded binary streams (`server/stream.py`) and persistent accounts (`server/accounts.py`). Run all checks with `python -m unittest discover -s server -p "test_*.py" -v`. Install dependencies with `python -m pip install -r requirements.txt`.
 

@@ -1,19 +1,23 @@
-# Brawl Stars V66 Private Server Implementation
+# Brawl Stars v47 private server
 
-Private Server is an early-stage Python private-server project for Brawl Stars V66, the Prestige update. The V66 client and server are not working together yet. There is no server implementation in this workspace; development starts from the APK and protocol references below.
+Target client: **47.227**. The current objective is to reach the home screen through a locally hosted server and `OwnHomeData` (24101).
+
+The separately installed tablet client is `com.supercell.brawlstarq`. Its automatic startup patch preserves the original game library and bytecode, and supplies the original certificate to the cloned app's startup checks. Test only on the USB-connected physical tablet; preserve the official installed game and its data.
+
+## Run
+
+```powershell
+python -m unittest discover -s server -p test_protocol.py -v
+python -u server/main.py
+adb -s f298358c reverse tcp:19347 tcp:19347
+```
+
+The server currently supports framing, ClientHello/ServerHello, and keepalive. Login encryption, LoginOk and OwnHomeData are pending actual client integration. A synthetic physical-tablet tunnel test passes; this does not demonstrate that the game client has logged in.
 
 ## Client
 
-The retained [66.300 ARM32 bundle](https://apkpure.net/brawl-stars-android-app/com.supercell.brawlstars/download/66.300) identifies itself as `com.supercell.brawlstars`, version code `66300`. Its SHA-1 matches the publisher's listing, and its checked splits have verified signatures. Its `libg.so` and `libsupercell_brawlstars.so` are both 32-bit ARM. The protection library is still present; startup and server redirection have not been tested.
+- `tools/startup.js`: automatic startup checks and backend routing.
+- `tools/build_autostart.py`: packages the embedded script into the diagnostic base.
+- Signed APKs, original client assets, captures and local build tools stay outside Git.
 
-The original ARM32 XAPK and extracted splits are in `APK/` and are excluded from Git. USB debugging (`adb -d`) is the preferred way to test on the tablet; preserve the official installation and use a separately identified test copy.
-
-## Protocol reference
-
-[KSBS-V66](https://github.com/KasyaGamer/KSBS-V66) is a public Node.js server example for **66.293**. Its source archive contains packet implementations including ClientHello (10100), ServerHello (20100), login, and home messages. Its README describes it as a testing project with incomplete functionality. It is a useful reference, but compatibility with **66.300** and the provided APK has not been established. Our server is intended to be written in Python.
-
-## Why we switched from V69
-
-The V69 client did not reach its connecting screen: the separately packaged ARM32 clone stopped during protected startup before sending a real ClientHello. Several approaches failed to make it usable, and further work would require disproportionate time and compute for the current goal. V69 is paused for possible future work in the separate [V69 research repository](https://github.com/TerminalDev-1/brawl-stars-v69-research).
-
-This repository was renamed from the V69 project, so its earlier Git history still contains V69 work. The V69 release and its assets have been removed from this repository; the separate V69 repository preserves the project history for future work.
+The original 47.227 APK remains unmodified in the project folder. Startup was verified across three cold starts without a debugger attached. The last verified screen was the update prompt; routing the old client to this server is the next integration step.

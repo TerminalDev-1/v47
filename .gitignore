@@ -1,10 +1,9 @@
-APK/*
-!APK/.gitkeep
-__pycache__/
-*.py[cod]
+*.apk
+*.xapk
 *.log
-*.idsig
 *.keystore
-*.jks
+*.sqlite3
 build/
-tools/
+__pycache__/
+server/captures/
+server/data/
